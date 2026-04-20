@@ -1,0 +1,91 @@
+<div class="flex flex-col items-center justify-center gap-6 p-6 flex-1">
+  <mat-card class="w-full max-w-lg overflow-hidden">
+    <mat-card-header>
+      <mat-card-title class="text-2xl">Counter</mat-card-title>
+      <mat-card-subtitle class="flex flex-wrap gap-2 mt-2">
+        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/15 text-blue-400">
+          withState
+        </span>
+        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-500/15 text-purple-400">
+          withComputed
+        </span>
+        <span
+          class="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400"
+        >
+          withMethods
+        </span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Top spacer -->
+      <div class="h-6"></div>
+
+      <!-- Counter display panel -->
+      <div
+        class="rounded-xl py-10 px-6 text-center bg-linear-to-br from-white/5 to-white/2 border border-white/5 transition-colors"
+      >
+        <div
+          class="text-7xl font-bold tracking-tight tabular-nums transition-colors"
+          [class.text-emerald-400]="store.isPositive()"
+          [class.text-red-400]="store.isNegative()"
+        >
+          {{ store.count() }}
+        </div>
+      </div>
+
+      <!-- Spacer -->
+      <div class="h-8"></div>
+
+      <!-- Computed stats row -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-lg py-3 px-4 bg-white/3 border border-white/5">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Doubled</div>
+          <div class="text-lg font-semibold tabular-nums">{{ store.doubled() }}</div>
+        </div>
+        <div class="rounded-lg py-3 px-4 bg-white/3 border border-white/5">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">History</div>
+          <div class="text-lg font-semibold tabular-nums">{{ store.historyCount() }}</div>
+        </div>
+      </div>
+
+      <!-- Spacer -->
+      <div class="h-8"></div>
+
+      <!-- Step input -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Step</mat-label>
+        <input
+          matInput
+          type="number"
+          min="1"
+          [ngModel]="store.step()"
+          (ngModelChange)="onStepChange($event)"
+        />
+      </mat-form-field>
+
+      <!-- Primary actions -->
+      <div class="flex gap-2 justify-center">
+        <button mat-raised-button color="warn" class="min-w-24" (click)="store.decrement()">
+          − {{ store.step() }}
+        </button>
+        <button mat-stroked-button (click)="store.reset()">Reset</button>
+        <button mat-raised-button color="primary" class="min-w-24" (click)="store.increment()">
+          + {{ store.step() }}
+        </button>
+      </div>
+
+      <!-- Spacer with separator -->
+      <div class="h-6"></div>
+      <div class="border-t border-white/5"></div>
+      <div class="h-6"></div>
+
+      <!-- Undo action -->
+      <div class="flex justify-center">
+        <button mat-button [disabled]="!store.canUndo()" (click)="store.undo()">
+          ↶ Undo ({{ store.historyCount() }})
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,128 @@
+<div class="flex flex-col items-center justify-center gap-6 p-6 flex-1">
+  <mat-card class="w-full max-w-2xl overflow-hidden">
+    <mat-card-header>
+      <mat-card-title class="text-2xl">Todos</mat-card-title>
+      <mat-card-subtitle class="flex flex-wrap gap-2 mt-2">
+        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/15 text-blue-400">
+          withEntities
+        </span>
+        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-500/15 text-purple-400">
+          withComputed
+        </span>
+        <span
+          class="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-400"
+        >
+          withMethods
+        </span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Top spacer -->
+      <div class="h-6"></div>
+
+      <!-- Add todo form -->
+      <div class="flex gap-2 items-start">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>What needs to be done?</mat-label>
+          <input matInput type="text" [(ngModel)]="newTodoTitle" (keyup.enter)="onAddTodo()" />
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          class="h-14"
+          [disabled]="!newTodoTitle().trim()"
+          (click)="onAddTodo()"
+        >
+          Add
+        </button>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="rounded-lg py-3 px-4 bg-white/3 border border-white/5">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Total</div>
+          <div class="text-lg font-semibold tabular-nums">{{ store.totalCount() }}</div>
+        </div>
+        <div class="rounded-lg py-3 px-4 bg-white/3 border border-white/5">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Active</div>
+          <div class="text-lg font-semibold tabular-nums text-blue-400">
+            {{ store.activeCount() }}
+          </div>
+        </div>
+        <div class="rounded-lg py-3 px-4 bg-white/3 border border-white/5">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-1">Done</div>
+          <div class="text-lg font-semibold tabular-nums text-emerald-400">
+            {{ store.completedCount() }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Spacer -->
+      <div class="h-6"></div>
+
+      <!-- Filter toggle -->
+      <div class="flex justify-center">
+        <mat-button-toggle-group [value]="store.filter()" (change)="onFilterChange($event.value)">
+          <mat-button-toggle value="all">All</mat-button-toggle>
+          <mat-button-toggle value="active">Active</mat-button-toggle>
+          <mat-button-toggle value="completed">Completed</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <!-- Spacer -->
+      <div class="h-6"></div>
+
+      <!-- Todo list -->
+      @if (store.filteredTodos().length === 0) {
+        <div
+          class="rounded-xl py-10 px-6 text-center bg-white/2 border border-dashed border-white/10"
+        >
+          <div class="text-gray-500 text-sm">
+            @if (store.totalCount() === 0) {
+              No todos yet. Add one above to get started.
+            } @else {
+              No todos match the current filter.
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="flex flex-col gap-2">
+          @for (todo of store.filteredTodos(); track todo.id) {
+            <div
+              class="flex items-center gap-3 py-3 px-4 rounded-lg bg-white/3 border border-white/5 transition-colors hover:bg-white/5"
+            >
+              <mat-checkbox [checked]="todo.completed" (change)="store.toggleTodo(todo.id)" />
+              <span
+                class="flex-1 transition-all"
+                [class.line-through]="todo.completed"
+                [class.text-gray-500]="todo.completed"
+              >
+                {{ todo.title }}
+              </span>
+              <button mat-icon-button aria-label="Remove todo" (click)="store.removeTodo(todo.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Spacer with separator -->
+      <div class="h-6"></div>
+      <div class="border-t border-white/5"></div>
+      <div class="h-6"></div>
+
+      <!-- Clear completed -->
+      <div class="flex justify-center">
+        <button
+          mat-button
+          [disabled]="store.completedCount() === 0"
+          (click)="store.clearCompleted()"
+        >
+          Clear completed ({{ store.completedCount() }})
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
